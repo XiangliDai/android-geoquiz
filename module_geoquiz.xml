@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_geoquiz" default="compile.module.geoquiz">
+  <dirname property="module.geoquiz.basedir" file="${ant.file.module_geoquiz}"/>
+  
+  <property name="module.jdk.home.geoquiz" value="${jdk.home.android_4.3_platform}"/>
+  <property name="module.jdk.bin.geoquiz" value="${jdk.bin.android_4.3_platform}"/>
+  <property name="module.jdk.classpath.geoquiz" value="jdk.classpath.android_4.3_platform"/>
+  
+  <property name="compiler.args.geoquiz" value="${compiler.args}"/>
+  
+  <property name="geoquiz.output.dir" value="${module.geoquiz.basedir}/out/production/GeoQuiz"/>
+  <property name="geoquiz.testoutput.dir" value="${module.geoquiz.basedir}/out/test/GeoQuiz"/>
+  
+  <path id="geoquiz.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="geoquiz.module.production.classpath">
+    <path refid="${module.jdk.classpath.geoquiz}"/>
+  </path>
+  
+  <path id="geoquiz.runtime.production.module.classpath">
+    <pathelement location="${geoquiz.output.dir}"/>
+  </path>
+  
+  <path id="geoquiz.module.classpath">
+    <path refid="${module.jdk.classpath.geoquiz}"/>
+    <pathelement location="${geoquiz.output.dir}"/>
+  </path>
+  
+  <path id="geoquiz.runtime.module.classpath">
+    <pathelement location="${geoquiz.testoutput.dir}"/>
+    <pathelement location="${geoquiz.output.dir}"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.geoquiz">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.geoquiz">
+    <patternset refid="excluded.from.module.geoquiz"/>
+  </patternset>
+  
+  <path id="geoquiz.module.sourcepath">
+    <dirset dir="${module.geoquiz.basedir}">
+      <include name="src"/>
+      <include name="gen"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.geoquiz" depends="compile.module.geoquiz.production,compile.module.geoquiz.tests" description="Compile module GeoQuiz"/>
+  
+  <target name="compile.module.geoquiz.production" depends="register.custom.compilers" description="Compile module GeoQuiz; production classes">
+    <mkdir dir="${geoquiz.output.dir}"/>
+    <javac2 destdir="${geoquiz.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.geoquiz}/javac">
+      <compilerarg line="${compiler.args.geoquiz}"/>
+      <bootclasspath refid="geoquiz.module.bootclasspath"/>
+      <classpath refid="geoquiz.module.production.classpath"/>
+      <src refid="geoquiz.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.geoquiz"/>
+    </javac2>
+    
+    <copy todir="${geoquiz.output.dir}">
+      <fileset dir="${module.geoquiz.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+      <fileset dir="${module.geoquiz.basedir}/gen">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.geoquiz.tests" depends="register.custom.compilers,compile.module.geoquiz.production" description="compile module GeoQuiz; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.geoquiz" description="cleanup module">
+    <delete dir="${geoquiz.output.dir}"/>
+    <delete dir="${geoquiz.testoutput.dir}"/>
+  </target>
+</project>
